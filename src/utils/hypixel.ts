@@ -9,5 +9,5 @@ export async function getHypixelProfile(ingameUuid: string) {
   );
   const response = await request.json();
   if (request.status !== 200) return false;
-    return response;
+  return response;
 }

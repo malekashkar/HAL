@@ -3,6 +3,7 @@ import { Message, TextChannel } from "discord.js";
 import Command from ".";
 import config from "../config";
 import { Report, ReportModel } from "../models/report";
+import { ScammerModel } from "../models/scammer";
 import { getMojangProfile } from "../utils";
 import confirmation from "../utils/confirmation";
 import embeds from "../utils/embeds";
@@ -13,6 +14,16 @@ export default class ReportCommand extends Command {
   description = "Report a user for scamming you or others.";
 
   async run(message: Message) {
+    const scammerData = await ScammerModel.findOne({
+      userId: message.author.id,
+    });
+    if (scammerData)
+      return message.channel.send(
+        embeds.error(
+          `${message.author} is currently on the scammer list. You are not allowed to create reports as a scammer!`
+        )
+      );
+
     const scammerIGN = await question(
       `What is the IGN of the scammer?`,
       message

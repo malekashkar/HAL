@@ -1,8 +1,6 @@
 import { Message } from "discord.js";
 import embeds from "./embeds";
 import config from "../config";
-import { time } from "console";
-import { mcNameValidation } from ".";
 
 export async function imageQuestion(question: string, message: Message) {
   const questionMessage = await message.channel.send(
