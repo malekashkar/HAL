@@ -4,6 +4,7 @@ import Command from ".";
 import config from "../config";
 import embeds from "../utils/embeds";
 import { permissions } from "../events/commandHandler";
+import { stripIndents } from "common-tags";
 
 export default class HelpCommand extends Command {
   cmdName = "help";
@@ -20,11 +21,17 @@ export default class HelpCommand extends Command {
     const description = commands
       .map(
         (command) =>
-          `**${config.prefix}${command.cmdName}**${
+          stripIndents`**${config.prefix}${command.cmdName}**${
             command.usage ? ` \`${command.usage}\`` : ``
-          } ~ ${command.description}`
+          } ~ ${command.description}${
+            command.aliases.length
+              ? `\nAliases: ${command.aliases
+                  .map((x) => `\`${config.prefix}${x}\``)
+                  .join(" ")}`
+              : ``
+          }`
       )
-      .join("\n");
+      .join("\n\n");
 
     return message.channel.send(embeds.normal(`Help Menu`, description));
   }
