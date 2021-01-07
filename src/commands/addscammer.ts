@@ -2,6 +2,7 @@ import { stripIndents } from "common-tags";
 import { Message } from "discord.js";
 import Command from ".";
 import { Scammer, ScammerModel } from "../models/scammer";
+import { UserModel } from "../models/user";
 import { getMojangProfile, mcNameValidation } from "../utils";
 import confirmation from "../utils/confirmation";
 import embeds from "../utils/embeds";
@@ -66,6 +67,20 @@ export default class AddScammerCommand extends Command {
             )
           );
         userId = user.id;
+      }
+    }
+    if (!userId) {
+      const userData = await UserModel.findOne({
+        ingameUuid: mojangProfile.id,
+      });
+      if (userData) {
+        userId = userData.userId;
+        message.channel.send(
+          embeds.normal(
+            `Discord Found`,
+            `**${ingameName}'s** discord has been found and set on his scammer profile!`
+          )
+        );
       }
     }
 
