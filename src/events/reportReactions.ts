@@ -1,9 +1,9 @@
 import { MessageReaction, TextChannel, User } from "discord.js";
 import Event, { EventNameType } from ".";
 import config from "../config";
-import { AdminModel } from "../models/admin";
 import { ReportModel } from "../models/report";
 import { Scammer, ScammerModel } from "../models/scammer";
+import { checkAdmin } from "../utils";
 import embeds from "../utils/embeds";
 
 export default class ReportReactions extends Event {
@@ -15,7 +15,7 @@ export default class ReportReactions extends Event {
 
     const message = reaction.message;
     if (message.guild.id === config.mainGuild) {
-      const admin = await AdminModel.findOne({ userId: user.id });
+      const admin = checkAdmin(user.id, this.client);
       if (admin || config.owners.includes(user.id)) {
         const reportData = await ReportModel.findOne({
           reportMessageId: message.id,
@@ -66,7 +66,7 @@ export default class ReportReactions extends Event {
               logChannel.send(
                 embeds.normal(
                   `Report Denied`,
-                  `The report on **${reportData.ingameName}** has been denied.`
+                  `Report **#${reportData.id}** on **${reportData.ingameName}** has been denied.`
                 )
               );
             }

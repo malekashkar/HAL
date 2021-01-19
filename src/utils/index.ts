@@ -1,4 +1,6 @@
 import fetch from "node-fetch";
+import Client from "..";
+import config from "../config";
 
 interface AccountInfo {
   name: string;
@@ -25,4 +27,12 @@ export function mcNameValidation(name: string) {
     return false;
   }
   return true;
+}
+
+export function checkAdmin(userId: string, client: Client) {
+  if (!userId) return false;
+  const guild = client.guilds.resolve(config.mainGuild);
+  const member = guild.members.resolve(userId);
+  if (member.roles.cache.has(config.staffRole)) return true;
+  return false;
 }

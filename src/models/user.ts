@@ -8,15 +8,18 @@ export class User {
   userId: string;
 
   @prop()
-  ingameName: string;
+  ingameName?: string;
 
   @prop()
-  ingameUuid: string;
+  ingameUuid?: string;
 
   @prop()
-  lowercaseIngameName: string;
+  lowercaseIngameName?: string;
 
-  constructor(userId: string, ingameName: string, ingameUuid: string) {
+  @prop()
+  lastCommandTime?: number;
+
+  constructor(userId: string, ingameName?: string, ingameUuid?: string) {
     this.userId = userId;
     this.ingameName = ingameName;
     this.ingameUuid = ingameUuid;

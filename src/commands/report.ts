@@ -4,7 +4,8 @@ import Command from ".";
 import config from "../config";
 import { Report, ReportModel } from "../models/report";
 import { ScammerModel } from "../models/scammer";
-import { getMojangProfile } from "../utils";
+import { UserModel } from "../models/user";
+import { checkAdmin, getMojangProfile } from "../utils";
 import confirmation from "../utils/confirmation";
 import embeds from "../utils/embeds";
 import { imageQuestion, question, questionOption } from "../utils/question";
@@ -24,17 +25,17 @@ export default class ReportCommand extends Command {
         )
       );
 
-    const scammerIGN = await question(
+    const ingameNameQuestion = await question(
       `What is the IGN of the scammer?`,
       message
     );
-    if (!scammerIGN) return;
+    if (!ingameNameQuestion) return;
 
-    const mojangProfile = await getMojangProfile(scammerIGN.content);
+    const mojangProfile = await getMojangProfile(ingameNameQuestion.content);
     if (!mojangProfile)
       return message.channel.send(
         embeds.error(
-          `The Minecaft name **${scammerIGN}** does not exist. Please try again!`
+          `The Minecaft name **${ingameNameQuestion.content}** does not exist. Please try again!`
         )
       );
 
@@ -55,6 +56,30 @@ export default class ReportCommand extends Command {
         );
       userId = user.id;
     }
+    if (!userId) {
+      const userData = await UserModel.findOne({
+        ingameUuid: mojangProfile.id,
+      });
+      if (userData) {
+        userId = userData.userId;
+        message.channel.send(
+          embeds.normal(
+            `Discord Found`,
+            `**${mojangProfile.name}'s** discord has been found and set on his scammer profile!`
+          )
+        );
+      }
+    }
+
+    const admin = checkAdmin(userId, this.client);
+    const adminUser = await UserModel.findOne({ ingameUuid: mojangProfile.id });
+    if (admin || adminUser)
+      return message.channel.send(
+        embeds.error(
+          stripIndents`You may not report a member of the **${config.name}** staff team.
+          Contact administrators if inquiry is serious.`
+        )
+      );
 
     const reason = await question(
       `What is your reason for adding **${mojangProfile.name}** to the scammer list?`,

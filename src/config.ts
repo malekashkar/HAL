@@ -1,4 +1,5 @@
 export default {
+  name: "HAL",
   prefix: "!",
   questionTime: 1 * 60 * 1000, // in ms
   mainGuild: "796426623297388595",
@@ -6,4 +7,5 @@ export default {
   reportLogsChannel: "796609745963319336",
   owners: ["119980290260205572", "584915458302672916"],
   staffRole: "796427092887339038",
+  commandCooldown: 2 * 1000,
 };
